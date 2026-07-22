@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule AI Technical Interview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #0b0f17; color: #f3f4f6; }
+        .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-md w-full glass-card rounded-3xl p-8 shadow-2xl text-center space-y-6 relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl"></div>
+
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white text-2xl mx-auto shadow-lg shadow-cyan-500/20">
+            <i class="fa-solid fa-phone-volume"></i>
+        </div>
+
+        <div>
+            <h1 class="text-2xl font-bold text-white">Hi {{ candidate_name }}!</h1>
+            <p class="text-gray-400 text-sm mt-1">Shortlisted for <span class="text-cyan-400 font-semibold">{{ role_title }}</span></p>
+        </div>
+
+        <div class="bg-gray-900/80 p-4 rounded-2xl border border-gray-800 text-left text-xs text-gray-300 space-y-2">
+            <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                <span class="text-gray-400">Target Phone:</span>
+                <span class="font-mono text-cyan-400 font-semibold">{{ phone_number }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-400">Format:</span>
+                <span>Automated AI Voice Screening</span>
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            <button id="btnCallNow" onclick="triggerCallNow()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-semibold text-lg rounded-2xl transition shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-3">
+                <i class="fa-solid fa-phone"></i> Call Me Now
+            </button>
+            <p class="text-xs text-gray-500">Ensure your phone is nearby and reachable.</p>
+        </div>
+
+        <div id="callStatus" class="hidden p-4 rounded-2xl text-sm font-medium"></div>
+    </div>
+
+    <script>
+        async function triggerCallNow() {
+            const btn = document.getElementById('btnCallNow');
+            const statusBox = document.getElementById('callStatus');
+            
+            btn.disabled = true;
+            btn.className = 'w-full py-4 bg-gray-800 text-gray-400 font-semibold text-lg rounded-2xl cursor-not-allowed flex items-center justify-center gap-3';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Dialing your phone...';
+
+            statusBox.className = 'hidden';
+
+            try {
+                const res = await fetch('/api/schedule/{{ candidate_id }}/call-now', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    statusBox.className = 'p-4 rounded-2xl text-sm font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 block';
+                    statusBox.innerHTML = `<i class="fa-solid fa-circle-check text-lg block mb-1"></i> Outbound Call Initiated!<br><span class="text-xs text-gray-300">Your phone should ring in a few seconds.</span>`;
+                } else {
+                    statusBox.className = 'p-4 rounded-2xl text-sm font-medium bg-rose-500/10 border border-rose-500/30 text-rose-400 block';
+                    statusBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> ${data.detail || 'Could not initiate call.'}`;
+                    btn.disabled = false;
+                    btn.className = 'w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-semibold text-lg rounded-2xl transition shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-3';
+                    btn.innerHTML = '<i class="fa-solid fa-phone"></i> Call Me Now';
+                }
+            } catch (err) {
+                statusBox.className = 'p-4 rounded-2xl text-sm font-medium bg-rose-500/10 border border-rose-500/30 text-rose-400 block';
+                statusBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> Error connecting to server.`;
+            }
+        }
+    </script>
+</body>
+</html>

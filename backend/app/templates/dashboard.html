@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Recruitment Platform - V1 Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #0b0f17; color: #f3f4f6; }
+        .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    </style>
+</head>
+<body class="min-h-screen p-6 md:p-10">
+
+    <div class="max-w-7xl mx-auto space-y-8">
+        
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-gray-800">
+            <div>
+                <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
+                    <i class="fa-solid fa-brain text-cyan-400 mr-3"></i>V1 AI Screening Platform
+                </h1>
+                <p class="text-gray-400 text-sm mt-1">Local End-to-End Automated WhatsApp, Telephony & Ollama AI Funnel</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="loadCandidates()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 rounded-lg text-sm transition flex items-center gap-2 border border-gray-700">
+                    <i class="fa-solid fa-rotate"></i> Refresh Dashboard
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Panel: Input Candidate Form (5 cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="glass-card rounded-2xl p-6 shadow-xl space-y-6">
+                    <div class="flex items-center gap-3 pb-3 border-b border-gray-800">
+                        <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold text-sm">1</div>
+                        <h2 class="text-xl font-semibold text-white">Start New Interview Process</h2>
+                    </div>
+
+                    <form id="startProcessForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Candidate Full Name</label>
+                            <input type="text" id="candidateName" required placeholder="e.g. Jane Doe" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500">
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Phone Number</label>
+                                <input type="text" id="candidatePhone" required placeholder="+15551234567" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Job Role Title</label>
+                                <input type="text" id="roleTitle" required placeholder="Senior AI Engineer" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500">
+                            </div>
+                        </div>
+
+                        <!-- Questions Section -->
+                        <div class="pt-4 border-t border-gray-800">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Custom Questions & Expected Answers</label>
+                                <button type="button" onclick="addQuestionField()" class="text-xs text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1">
+                                    <i class="fa-solid fa-plus"></i> Add Question
+                                </button>
+                            </div>
+
+                            <div id="questionsContainer" class="space-y-4">
+                                <!-- Default Question 1 -->
+                                <div class="question-block bg-gray-900/80 p-4 rounded-xl border border-gray-800 space-y-2">
+                                    <input type="text" class="q-text w-full bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500" placeholder="Question 1 (e.g. Do you have 3+ years experience with FastAPI?)" value="Do you have 3+ years of hands-on experience with FastAPI and Python microservices?">
+                                    <input type="text" class="q-ans w-full bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-sm font-mono text-emerald-400 placeholder-gray-500 focus:outline-none focus:border-emerald-500" placeholder="Expected Answer (e.g. Yes, 3+ years in production)" value="Yes, 3+ years of production experience building async APIs and clean database models.">
+                                </div>
+                                <!-- Default Question 2 -->
+                                <div class="question-block bg-gray-900/80 p-4 rounded-xl border border-gray-800 space-y-2">
+                                    <input type="text" class="q-text w-full bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500" placeholder="Question 2" value="What is your current notice period in days and your salary expectations?">
+                                    <input type="text" class="q-ans w-full bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-sm font-mono text-emerald-400 placeholder-gray-500 focus:outline-none focus:border-emerald-500" placeholder="Expected Answer" value="Notice period under 30 days, salary expectations around 90,000 USD.">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btnSubmit" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold rounded-xl transition shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-lg"></i> Start Process (Send WhatsApp)
+                        </button>
+                    </form>
+
+                    <div id="statusAlert" class="hidden p-4 rounded-xl text-sm font-medium"></div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Candidate Rankings & Scores (7 cols) -->
+            <div class="lg:col-span-7 space-y-6">
+                <div class="glass-card rounded-2xl p-6 shadow-xl space-y-6">
+                    <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-sm">2</div>
+                            <h2 class="text-xl font-semibold text-white">Candidate Ranks & AI Evaluations</h2>
+                        </div>
+                        <span class="text-xs px-3 py-1 bg-gray-800 text-gray-400 rounded-full border border-gray-700 font-mono">Agent 4 (Ollama Llama 3)</span>
+                    </div>
+
+                    <!-- Candidates Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="text-xs uppercase text-gray-400 border-b border-gray-800">
+                                    <th class="py-3 px-3">Candidate / Role</th>
+                                    <th class="py-3 px-3">Status</th>
+                                    <th class="py-3 px-3">Score (0-100)</th>
+                                    <th class="py-3 px-3">Justification</th>
+                                    <th class="py-3 px-3 text-right">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="candidatesTableBody" class="divide-y divide-gray-800/60 text-sm">
+                                <tr>
+                                    <td colspan="5" class="py-8 text-center text-gray-500">Loading candidate evaluation records...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Transcript Modal -->
+    <div id="transcriptModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                <h3 id="modalTitle" class="text-lg font-semibold text-white">Call Transcript</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div id="modalTranscript" class="bg-gray-950 p-4 rounded-xl border border-gray-800 font-mono text-xs text-gray-300 max-h-96 overflow-y-auto whitespace-pre-wrap"></div>
+        </div>
+    </div>
+
+    <script>
+        function addQuestionField() {
+            const container = document.getElementById('questionsContainer');
+            const qCount = container.children.length + 1;
+            const div = document.createElement('div');
+            div.className = 'question-block bg-gray-900/80 p-4 rounded-xl border border-gray-800 space-y-2';
+            div.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-400 font-semibold">Question ${qCount}</span>
+                    <button type="button" onclick="this.parentElement.parentElement.remove()" class="text-xs text-rose-400 hover:text-rose-300">Remove</button>
+                </div>
+                <input type="text" class="q-text w-full bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500" placeholder="Question Text">
+                <input type="text" class="q-ans w-full bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-sm font-mono text-emerald-400 placeholder-gray-500 focus:outline-none focus:border-emerald-500" placeholder="Expected Answer">
+            `;
+            container.appendChild(div);
+        }
+
+        document.getElementById('startProcessForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            const alertBox = document.getElementById('statusAlert');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Initiating WhatsApp Outreach...';
+            alertBox.className = 'hidden';
+
+            const name = document.getElementById('candidateName').value;
+            const phone = document.getElementById('candidatePhone').value;
+            const role = document.getElementById('roleTitle').value;
+
+            const qBlocks = document.querySelectorAll('.question-block');
+            const questions = [];
+            qBlocks.forEach(blk => {
+                const text = blk.querySelector('.q-text').value;
+                const ans = blk.querySelector('.q-ans').value;
+                if (text) questions.push({ question_text: text, expected_answer: ans });
+            });
+
+            try {
+                const res = await fetch('/api/dashboard/start-interview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, role_title: role, questions })
+                });
+                const data = await res.json();
+                
+                if (res.ok && data.success) {
+                    alertBox.className = 'p-4 rounded-xl text-sm font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 block';
+                    alertBox.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i> ${data.message}`;
+                    loadCandidates();
+                } else {
+                    alertBox.className = 'p-4 rounded-xl text-sm font-medium bg-rose-500/10 border border-rose-500/30 text-rose-400 block';
+                    alertBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-2"></i> ${data.detail || 'Failed to start process'}`;
+                }
+            } catch (err) {
+                alertBox.className = 'p-4 rounded-xl text-sm font-medium bg-rose-500/10 border border-rose-500/30 text-rose-400 block';
+                alertBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-2"></i> Error connecting to backend API.`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-brands fa-whatsapp text-lg"></i> Start Process (Send WhatsApp)';
+            }
+        });
+
+        async function loadCandidates() {
+            const tbody = document.getElementById('candidatesTableBody');
+            try {
+                const res = await fetch('/api/dashboard/candidates');
+                const data = await res.json();
+                
+                if (!data.candidates || data.candidates.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="py-8 text-center text-gray-500">No candidates found. Submit the form on the left to start.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.candidates.map(c => {
+                    let scoreBadge = '<span class="text-gray-500">Pending</span>';
+                    if (c.score !== "N/A") {
+                        const scoreNum = parseFloat(c.score);
+                        const colorClass = scoreNum >= 80 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 
+                                          scoreNum >= 60 ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 
+                                          'bg-rose-500/20 text-rose-400 border-rose-500/30';
+                        scoreBadge = `<span class="px-3 py-1 rounded-full text-xs font-bold border ${colorClass}">${c.score} / 100</span>`;
+                    }
+
+                    return `
+                        <tr class="hover:bg-gray-900/50 transition">
+                            <td class="py-3 px-3">
+                                <div class="font-semibold text-white">${c.name}</div>
+                                <div class="text-xs text-gray-400">${c.role} • ${c.phone}</div>
+                            </td>
+                            <td class="py-3 px-3">
+                                <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-gray-800 text-cyan-400 border border-gray-700">${c.status}</span>
+                            </td>
+                            <td class="py-3 px-3">${scoreBadge}</td>
+                            <td class="py-3 px-3 text-xs text-gray-300 max-w-xs truncate" title="${c.justification}">${c.justification}</td>
+                            <td class="py-3 px-3 text-right">
+                                ${c.transcript ? `<button onclick="viewTranscript('${c.name}', \`${escapeHtml(c.transcript)}\`)" class="text-xs text-cyan-400 hover:underline">Transcript</button>` : '<span class="text-xs text-gray-600">No transcript</span>'}
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error("Failed loading candidates:", err);
+            }
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
+        }
+
+        function viewTranscript(name, transcript) {
+            document.getElementById('modalTitle').innerText = `Call Transcript - ${name}`;
+            document.getElementById('modalTranscript').innerText = transcript;
+            document.getElementById('transcriptModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('transcriptModal').classList.add('hidden');
+        }
+
+        // Initial Load
+        loadCandidates();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TalentEcho - AI Pre-Screening Recruitment Portal</title>
+    <!-- Modern premium typography -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #030303;
+            --glass-bg: rgba(18, 18, 29, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-glow: rgba(0, 242, 254, 0.05);
+            --text-primary: #f4f4f7;
+            --text-secondary: #a1a1aa;
+            --accent-cyan: #00f2fe;
+            --accent-blue: #4facfe;
+            --accent-mint: #00ffc7;
+            --accent-rose: #f43f5e;
+            --gradient-primary: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-cyan) 100%);
+            --gradient-mint: linear-gradient(135deg, #00f2fe 0%, #00ffc7 100%);
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(79, 172, 254, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 255, 199, 0.08) 0%, transparent 45%);
+            background-attachment: fixed;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+        }
+
+        /* Frosted Glass Container style */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+        }
+
+        /* --- LOGIN & LANDING VIEW --- */
+        #auth-view {
+            display: flex;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 580px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .auth-logo {
+            font-size: 2.8rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -1px;
+        }
+
+        .auth-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .role-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .role-btn {
+            padding: 20px 10px;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.02);
+            transition: var(--transition-smooth);
+        }
+
+        .role-btn i {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            background: var(--gradient-mint);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+
+        .role-btn span {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .role-btn:hover,
+        .role-btn.active {
+            background: rgba(0, 242, 254, 0.08);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+            transform: translateY(-4px);
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            padding-left: 4px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.15);
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 24px;
+            font-weight: 600;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            font-family: 'Space Grotesk', sans-serif;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: #000;
+            color: var(--bg-base);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.95;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* --- DASHBOARD WRAPPER --- */
+        #dashboard-view {
+            display: none;
+            padding-bottom: 60px;
+        }
+
+        /* Header UI */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 60px;
+            background: rgba(3, 3, 3, 0.45);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.6rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-tag {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(0, 242, 254, 0.1);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            text-transform: uppercase;
+        }
+
+        /* Dashboard grid structure */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 40px auto 0;
+            padding: 0 40px;
+        }
+
+        /* Live calling queue ticker */
+        .live-queue-carousel {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 10px 0;
+            margin-bottom: 30px;
+        }
+
+        .live-queue-carousel::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .live-queue-carousel::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 2px;
+        }
+
+        .queue-node {
+            min-width: 240px;
+            padding: 16px;
+            border-radius: 14px;
+            background: rgba(18, 18, 29, 0.35);
+            border: 1px dashed var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .queue-node.active-dialing {
+            border-color: var(--accent-mint);
+            border-style: solid;
+            background: rgba(0, 255, 199, 0.05);
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 199, 0.2);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(0, 255, 199, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 199, 0);
+            }
+        }
+
+        .queue-node-info h4 {
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .queue-node-info p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Card counters grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            padding: 24px;
+            text-align: left;
+        }
+
+        .metric-card h3 {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-bottom: 8px;
+        }
+
+        .metric-card .value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- THREE ROLE VIEWS LAYOUT --- */
+        .role-section-panel {
+            display: none;
+            /* Toggled dynamically */
+        }
+
+        /* Recruiter Main Area */
+        .workspace-split {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* DataTable Style */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 16px 20px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.01);
+            color: #fff;
+        }
+
+        .cis-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            background: rgba(0, 242, 254, 0.1);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+        }
+
+        /* Admin environment overrides form */
+        .admin-controls-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .config-card {
+            padding: 30px;
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        /* Candidate calendar picker portal styles */
+        .calendar-card {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .calendar-slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        .slot-btn {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .slot-btn:hover,
+        .slot-btn.active {
+            background: rgba(0, 255, 199, 0.1);
+            border-color: var(--accent-mint);
+            color: #fff;
+        }
+
+        /* --- DOSSIER CARD MODAL --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 1100px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border-radius: 20px;
+            animation: modal-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modal-enter {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-body-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .transcript-chat {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            height: 350px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-bubble {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            line-height: 1.45;
+        }
+
+        .chat-bubble.recruiter {
+            background: rgba(79, 172, 254, 0.15);
+            align-self: flex-start;
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .chat-bubble.candidate {
+            background: rgba(255, 255, 255, 0.05);
+            align-self: flex-end;
+            border-right: 3px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .grade-pill-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .grade-pill-score {
+            border: 1px solid var(--glass-border);
+            padding: 14px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .grade-pill-score h5 {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .grade-pill-score div {
+            font-size: 1.25rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--accent-mint);
+        }
+
+        .summary-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card h4 {
+            margin-bottom: 8px;
+            color: var(--accent-cyan);
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ================== 1. AUTH / SIGN-IN VIEW ================== -->
+    <div id="auth-view">
+        <div class="glass-card auth-container">
+            <div class="auth-logo">
+                <i class="fa-solid fa-microphone-lines"></i> TalentEcho
+            </div>
+            <div class="auth-subtitle">AI Pre-Screening Recruitment Control Center</div>
+
+            <!-- Dynamic Role Chooser -->
+            <div class="role-selector">
+                <div class="role-btn active" onclick="selectRole('recruiter')" id="btn-recruiter">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span>Recruiter</span>
+                </div>
+                <div class="role-btn" onclick="selectRole('admin')" id="btn-admin">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Admin</span>
+                </div>
+                <div class="role-btn" onclick="selectRole('candidate')" id="btn-candidate">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <span>Candidate</span>
+                </div>
+            </div>
+
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Corporate E-mail</label>
+                    <input type="email" id="login-email" class="form-input" required placeholder="name@talent.echo">
+                </div>
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <label>Password</label>
+                    <input type="password" id="login-password" class="form-input" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    Verify Credentials & Sign In <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <div style="margin-top: 24px; font-size: 0.8rem; color: var(--text-secondary);">
+                <span>Tip: default credentials are seeded automatically:</span><br>
+                <code style="color: var(--accent-cyan);">recruiter@talent.echo / recruiter123</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================== 2. APP CONTROL DASHBOARD VIEW ================== -->
+    <div id="dashboard-view">
+        <header class="dashboard-header bg-glass">
+            <div class="logo-section">
+                <i class="fa-solid fa-microphone-lines"></i>
+                <span>TalentEcho</span>
+            </div>
+
+            <div class="user-profile">
+                <span id="user-email-tag" style="font-size: 0.9rem; font-weight: 500;"></span>
+                <span id="user-role-tag" class="user-tag">Recruiter</span>
+                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="handleLogout()">
+                    Logout <i class="fa-solid fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            <!-- Dynamic Role Panels -->
+
+            <!-- ================== RECRUITER PANEL VIEW ================== -->
+            <div id="panel-recruiter" class="role-section-panel">
+                <!-- Ticker Queue carousel -->
+                <div class="section-header" style="margin-bottom: 12px;">
+                    <h3><i class="fa-solid fa-list-check"></i> Outbound Call Queue</h3>
+                    <span style="font-size: 0.75rem; color: var(--text-secondary);"><i
+                            class="fa-solid fa-rotate-right fa-spin"></i> Polling every 5s</span>
+                </div>
+                <div class="live-queue-carousel" id="live-call-queue">
+                    <!-- Loaded dynamically -->
+                    <div style="color: var(--text-secondary); font-size: 0.85rem; padding: 12px;">No active calling
+                        queues.</div>
+                </div>
+
+                <!-- Global stats grids -->
+                <div class="metrics-grid">
+                    <div class="glass-card metric-card">
+                        <h3>Active Campaigns</h3>
+                        <div class="value" id="stat-campaigns">0</div>
+                    </div>
+                    <div class="glass-card metric-card">
+                        <h3>Graded Audits</h3>
+                        <div class="value" id="stat-completed">0</div>
+                    </div>
+                    <div class="glass-card metric-card">
+                        <h3>Avg Intelligence Score (CIS)</h3>
+                        <div class="value" id="stat-avg-cis">0.0</div>
+                    </div>
+                    <div class="glass-card metric-card">
+                        <h3>Total Candidates</h3>
+                        <div class="value" id="stat-candidates">0</div>
+                    </div>
+                </div>
+
+                <!-- Workspace columns splitter -->
+                <div class="workspace-split">
+                    <!-- Column 1: Candidates Scorecards List -->
+                    <div class="glass-card" style="padding: 24px;">
+                        <div class="section-header">
+                            <h2>Talent Evaluation Dossier Center</h2>
+                            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 0.85rem;"
+                                onclick="openNewCampaignModal()">
+                                <i class="fa-solid fa-plus"></i> New Campaign
+                            </button>
+                        </div>
+
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>CIS Score</th>
+                                        <th>Technical</th>
+                                        <th>JD Match</th>
+                                        <th>Notice Period</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="evaluations-table-body">
+                                    <!-- Dynamic elements loaded via API -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Upload CSV Section -->
+                    <div class="glass-card" style="padding: 24px; align-self: flex-start;">
+                        <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-file-csv"></i> Candidates CSV Ingestion
+                        </h3>
+                        <p
+                            style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.4;">
+                            Upload candidate sheets to import into active campaigns. Required columns:
+                            <code>first_name</code>, <code>last_name</code>, <code>email</code>,
+                            <code>phone_number</code>.
+                        </p>
+
+                        <form id="csv-upload-form" onsubmit="handleCSVUpload(event)">
+                            <div class="form-group">
+                                <label>Target Campaign ID</label>
+                                <input type="text" id="csv-campaign-id" class="form-input" required
+                                    placeholder="UID of Campaign">
+                            </div>
+                            <div class="form-group">
+                                <label>CSV File</label>
+                                <input type="file" id="csv-file-input" class="form-input" required accept=".csv">
+                            </div>
+                            <button type="submit" class="btn btn-outline" style="width: 100%;">
+                                Parse & Enroll Candidates <i class="fa-solid fa-cloud-upload-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================== ADMIN PANEL VIEW ================== -->
+            <div id="panel-admin" class="role-section-panel">
+                <div class="section-header">
+                    <h2>System Administration Dashboard</h2>
+                </div>
+
+                <div class="admin-controls-grid">
+                    <div class="glass-card config-card">
+                        <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-cog"></i> Outbound Call Configuration
+                        </h3>
+                        <div class="toggle-switch">
+                            <div>
+                                <strong>Local Mock Dialing Simulation</strong>
+                                <p style="font-size: 0.8rem; color: var(--text-secondary);">Simulates calls internally
+                                    without Twilio charges.</p>
+                            </div>
+                            <input type="checkbox" checked disabled>
+                        </div>
+                        <div class="toggle-switch">
+                            <div>
+                                <strong>Automatic Post-Call Grading (Celery)</strong>
+                                <p style="font-size: 0.8rem; color: var(--text-secondary);">Directs Celery to execute
+                                    LLM evaluation once calls status is completed.</p>
+                            </div>
+                            <input type="checkbox" checked disabled>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label>Base Endpoint URL</label>
+                            <input type="text" value="http://localhost:8000" class="form-input" readOnly>
+                        </div>
+                    </div>
+
+                    <div class="glass-card config-card">
+                        <h3 style="margin-bottom: 20px;"><i class="fa-solid fa-server"></i> API Gateway Logs</h3>
+                        <div
+                            style="background: rgba(0,0,0,0.5); font-family: monospace; font-size: 0.8rem; padding: 16px; border-radius: 12px; height: 180px; overflow-y: auto; color: var(--accent-mint);">
+                            [INFO] 2026-07-17 DB Automigration triggered.<br>
+                            [INFO] 2026-07-17 Seed script ran successfully loaded 3 users.<br>
+                            [INFO] 2026-07-17 Outbound poller running active check window (09:00 - 18:00).<br>
+                            [INFO] 2026-07-17 Celery broker linked via Redis database state.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================== CANDIDATE PANEL VIEW ================== -->
+            <div id="panel-candidate" class="role-section-panel">
+                <div class="glass-card calendar-card">
+                    <i class="fa-solid fa-calendar-days"
+                        style="font-size: 3rem; color: var(--accent-mint); margin-bottom: 20px;"></i>
+                    <h2>Self-Scheduling Assistant</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 30px; line-height: 1.4;">
+                        Select a preferred slot below to reschedule your upcoming AI screening phone call. Our automated
+                        agent will call you at the selected time.
+                    </p>
+
+                    <div class="calendar-slots">
+                        <div class="slot-btn" onclick="selectSlot(this, 'Tomorrow, 10:00 AM')">Tomorrow 10:00 AM</div>
+                        <div class="slot-btn" onclick="selectSlot(this, 'Tomorrow, 02:30 PM')">Tomorrow 02:30 PM</div>
+                        <div class="slot-btn active" onclick="selectSlot(this, 'Monday, 11:00 AM')">Monday 11:00 AM
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary"
+                        onclick="alert('Slot reschedule requested successfully! Ready for AI phone pre-screening.')">
+                        Confirm Appointment Time <i class="fa-solid fa-check"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================== 3. DOSSIER DETAILS MODAL ================== -->
+    <div class="modal-overlay" id="dossier-modal">
+        <div class="glass-card modal-content" style="background: rgba(10, 10, 15, 0.95);">
+            <div class="dashboard-header" style="border-bottom: 1px solid var(--glass-border); padding: 20px 30px;">
+                <div>
+                    <h2 id="modal-candidate-name">Jane Doe</h2>
+                    <span id="modal-candidate-email"
+                        style="font-size: 0.85rem; color: var(--text-secondary);">jane.doe@example.com</span>
+                </div>
+                <button class="btn btn-outline" style="padding: 6px 12px; width: auto;" onclick="closeModal()">
+                    Close <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body-split">
+                <!-- Left panel: Scores & Summaries -->
+                <div>
+                    <div class="grade-pill-row">
+                        <div class="grade-pill-score">
+                            <h5>CIS Rating</h5>
+                            <div id="modal-cis-score">8.5</div>
+                        </div>
+                        <div class="grade-pill-score">
+                            <h5>Tech Stack</h5>
+                            <div id="modal-tech-score">9.0</div>
+                        </div>
+                        <div class="grade-pill-score">
+                            <h5>JD Fit</h5>
+                            <div id="modal-jd-score">8.5</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <h4>AI Recruiter Summary</h4>
+                        <p id="modal-ai-summary"
+                            style="font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);"></p>
+                    </div>
+
+                    <div class="summary-card">
+                        <h4>Extracted Metrics</h4>
+                        <div style="font-size: 0.88rem; line-height: 1.6;">
+                            <div><i class="fa-solid fa-clock"></i> <strong>Notice Period:</strong> <span
+                                    id="modal-notice">30 Days</span></div>
+                            <div><i class="fa-solid fa-money-bill-wave"></i> <strong>Expected Compensation:</strong>
+                                <span id="modal-salary">$80,000 / year</span>
+                            </div>
+                            <div><i class="fa-solid fa-briefcase"></i> <strong>Experience:</strong> <span
+                                    id="modal-exp">5 years</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right panel: Transcripts Dialog View -->
+                <div>
+                    <h3 style="margin-bottom: 12px;"><i class="fa-solid fa-quote-left"></i> Audiotape Transcript</h3>
+                    <div class="transcript-chat" id="modal-transcript-container">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================== SCRIPT SYSTEM CONTROL ================== -->
+    <script>
+        let currentRole = 'recruiter';
+        let sessionToken = null;
+
+        function selectRole(role) {
+            currentRole = role;
+            document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${role}`).classList.add('active');
+
+            // Auto fill based on selected role helper
+            const emailInput = document.getElementById('login-email');
+            const passInput = document.getElementById('login-password');
+            if (role === 'recruiter') {
+                emailInput.value = 'recruiter@talent.echo';
+                passInput.value = 'recruiter123';
+            } else if (role === 'admin') {
+                emailInput.value = 'admin@talent.echo';
+                passInput.value = 'admin123';
+            } else if (role === 'candidate') {
+                emailInput.value = 'candidate@talent.echo';
+                passInput.value = 'candidate123';
+            }
+        }
+
+        // Initialize helper trigger
+        selectRole('recruiter');
+
+        function selectSlot(element, slot) {
+            document.querySelectorAll('.slot-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || 'Login Failed');
+                }
+
+                const data = await response.json();
+                sessionToken = data.access_token;
+
+                // Set profile tags
+                document.getElementById('user-email-tag').innerText = data.email;
+                document.getElementById('user-role-tag').innerText = data.role;
+                document.getElementById('user-role-tag').className = `user-tag role-${data.role}`;
+
+                // Toggle views
+                document.getElementById('auth-view').style.display = 'none';
+                document.getElementById('dashboard-view').style.display = 'block';
+
+                // Display appropriate panel
+                document.querySelectorAll('.role-section-panel').forEach(p => p.style.display = 'none');
+                document.getElementById(`panel-${data.role}`).style.display = 'block';
+
+                if (data.role === 'recruiter') {
+                    // Populate evaluation tables
+                    loadEvaluationsList();
+                    loadQueueMetrics();
+                    // Start automatic poller
+                    setInterval(loadQueueMetrics, 5000);
+                }
+            } catch (err) {
+                alert('Authentication Error: ' + err.message);
+            }
+        }
+
+        function handleLogout() {
+            sessionToken = null;
+            document.getElementById('auth-view').style.display = 'flex';
+            document.getElementById('dashboard-view').style.display = 'none';
+            selectRole('recruiter');
+        }
+
+        async function loadEvaluationsList() {
+            try {
+                const res = await fetch('/api/dashboard/evaluations', {
+                    headers: { 'Authorization': `Bearer ${sessionToken}` }
+                });
+                if (!res.ok) return;
+                const items = await res.json();
+                const tbody = document.getElementById('evaluations-table-body');
+                tbody.innerHTML = '';
+
+                if (items.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-secondary);">No evaluations loaded yet. Trigger dry-run simulation to seed.</td></tr>';
+                    return;
+                }
+
+                items.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${item.first_name} ${item.last_name}</strong></td>
+                        <td>${item.email}</td>
+                        <td><span class="cis-badge">${item.candidate_intelligence_score.toFixed(1)}</span></td>
+                        <td>${item.technical_score.toFixed(1)} / 10</td>
+                        <td>${item.jd_fit_score.toFixed(1)} / 10</td>
+                        <td>${item.extracted_notice_period || 'N/A'}</td>
+                        <td>
+                            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.75rem; width:auto;" onclick="openDossierModal('${item.id}')">
+                                View Dossier <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function loadQueueMetrics() {
+            try {
+                const res = await fetch('/api/dashboard/live-queue', {
+                    headers: { 'Authorization': `Bearer ${sessionToken}` }
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+
+                // Set counters
+                document.getElementById('stat-campaigns').innerText = data.active_campaigns;
+                document.getElementById('stat-completed').innerText = data.completed_calls;
+                document.getElementById('stat-avg-cis').innerText = data.avg_cis.toFixed(1);
+                document.getElementById('stat-candidates').innerText = data.total_candidates;
+
+                // Load calling row
+                const queueDiv = document.getElementById('live-call-queue');
+                queueDiv.innerHTML = '';
+
+                if (data.live_queue.length === 0) {
+                    queueDiv.innerHTML = '<div style="color:var(--text-secondary); font-size:0.85rem; padding:12px;"><i class="fa-solid fa-mug-hot"></i> Calling queue empty. All matches pre-screened.</div>';
+                    return;
+                }
+
+                data.live_queue.forEach((item, idx) => {
+                    const isCalling = item.status === 'calling';
+                    const node = document.createElement('div');
+                    node.className = `queue-node ${isCalling ? 'active-dialing' : ''}`;
+                    node.innerHTML = `
+                        <div class="queue-node-info">
+                            <h4>${item.first_name} ${item.last_name}</h4>
+                            <p>${item.phone_number}</p>
+                        </div>
+                        <span style="font-size:0.75rem; font-weight:600; color:${isCalling ? 'var(--accent-mint)' : 'var(--text-secondary)'};">
+                            ${isCalling ? '<i class="fa-solid fa-phone-volume fa-shake"></i> DIALING' : '<i class="fa-solid fa-hourglass-start"></i> QUEUED'}
+                        </span>
+                    `;
+                    queueDiv.appendChild(node);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function handleCSVUpload(event) {
+            event.preventDefault();
+            const campaignId = document.getElementById('csv-campaign-id').value;
+            const fileInput = document.getElementById('csv-file-input');
+            if (fileInput.files.length === 0) return;
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const res = await fetch(`/api/candidates/upload-csv?campaign_id=${campaignId}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${sessionToken}` },
+                    body: formData
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'CSV Upload failed');
+                }
+
+                const result = await res.json();
+                alert(`Successfully parsed Candidate CSV!\nEnrolled: ${result.enrolled_count}\nDuplicates: ${result.duplicates_skipped}`);
+
+                // Clear inputs and reload
+                fileInput.value = '';
+                loadEvaluationsList();
+                loadQueueMetrics();
+            } catch (err) {
+                alert('Ingestion Error: ' + err.message);
+            }
+        }
+
+        async function openDossierModal(evaluationId) {
+            try {
+                const res = await fetch(`/api/dashboard/candidate-detail/${evaluationId}`, {
+                    headers: { 'Authorization': `Bearer ${sessionToken}` }
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+
+                document.getElementById('modal-candidate-name').innerText = `${data.candidate.first_name} ${data.candidate.last_name}`;
+                document.getElementById('modal-candidate-email').innerText = data.candidate.email;
+                document.getElementById('modal-cis-score').innerText = data.evaluation.candidate_intelligence_score.toFixed(1);
+                document.getElementById('modal-tech-score').innerText = data.evaluation.technical_score.toFixed(1);
+                document.getElementById('modal-jd-score').innerText = data.evaluation.jd_fit_score.toFixed(1);
+                document.getElementById('modal-ai-summary').innerText = data.evaluation.ai_generated_summary;
+                document.getElementById('modal-notice').innerText = data.evaluation.extracted_notice_period || 'N/A';
+                document.getElementById('modal-salary').innerText = data.evaluation.extracted_salary_expectation || 'N/A';
+                document.getElementById('modal-exp').innerText = data.evaluation.extracted_years_of_experience ? `${data.evaluation.extracted_years_of_experience} Year(s)` : 'N/A';
+
+                // Populate chat bubbles
+                const transcriptDiv = document.getElementById('modal-transcript-container');
+                transcriptDiv.innerHTML = '';
+
+                const transcriptLines = data.call_log.raw_transcript.split('\n');
+                transcriptLines.forEach(line => {
+                    if (!line.trim()) return;
+
+                    const bubble = document.createElement('div');
+                    bubble.className = 'chat-bubble';
+
+                    if (line.startsWith('AI Recruiter:') || line.startsWith('System:')) {
+                        bubble.className += ' recruiter';
+                        bubble.innerText = line.replace('AI Recruiter:', '').replace('System:', '').trim();
+                    } else if (line.startsWith('Candidate:')) {
+                        bubble.className += ' candidate';
+                        bubble.innerText = line.replace('Candidate:', '').trim();
+                    } else {
+                        bubble.className += ' candidate';
+                        bubble.innerText = line;
+                    }
+                    transcriptDiv.appendChild(bubble);
+                });
+
+                document.getElementById('dossier-modal').style.display = 'flex';
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('dossier-modal').style.display = 'none';
+        }
+
+        // Modal close on click outside helper
+        window.onclick = function (event) {
+            const modal = document.getElementById('dossier-modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>
