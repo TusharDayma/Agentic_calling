@@ -1,6 +1,6 @@
 export interface User {
     id: string;
-    email: string;
+    username: string;
     full_name: string;
     department: string;
     role: 'admin' | 'hr';
@@ -34,9 +34,11 @@ export interface Campaign {
 }
 
 export interface Question {
-    text: string;
+    question_text: string;
     category: string;
-    type: 'yes_no' | 'short_answer' | 'long_answer' | 'technical' | 'behavioral';
+    expected_answer: string;
+    difficulty: 'Easy' | 'Medium' | 'Hard';
+    type?: string;
 }
 
 export interface Candidate {

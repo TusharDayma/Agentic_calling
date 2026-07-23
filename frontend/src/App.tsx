@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 // Public pages
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 
 // Admin / System management pages
 import AdminUsers from './pages/admin/AdminUsers';
@@ -22,12 +23,17 @@ import HRCandidateDetail from './pages/hr/HRCandidateDetail';
 import HRAnalytics from './pages/hr/HRAnalytics';
 import HRReports from './pages/hr/HRReports';
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-    const { user, isLoading } = useAuth();
+function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode, allowedRoles?: string[] }) {
+    const { user, role, isLoading } = useAuth();
     if (isLoading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}><div className="spinner" /></div>;
 
     // Allow access - if not logged in, auto redirect to login
     if (!user) return <Navigate to="/login" replace />;
+    
+    if (allowedRoles && role && !allowedRoles.includes(role)) {
+        return <Navigate to="/hr" replace />; // or an unauthorized page
+    }
+
     return <>{children}</>;
 }
 
@@ -45,6 +51,7 @@ function AppRoutes() {
             {/* Public Landing Page */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={user ? <Navigate to="/hr" replace /> : <LoginPage />} />
+            <Route path="/signup" element={user ? <Navigate to="/hr" replace /> : <SignupPage />} />
 
             {/* Main Unified Platform Routes */}
             <Route path="/hr" element={
@@ -64,7 +71,7 @@ function AppRoutes() {
 
             {/* System / Admin Settings Routes embedded seamlessly */}
             <Route path="/admin" element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}>
                     <HRLayout />
                 </ProtectedRoute>
             }>

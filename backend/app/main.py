@@ -8,8 +8,8 @@ from datetime import datetime
 
 from app.config import settings
 from app.database import engine, Base, get_db
-from app.models import Campaign, Candidate, CallLog, CallEvaluation, User, JobRole, QuestionSet, AuditLog
-from app.routers import campaigns, candidates, calls, users
+from app.models import Campaign, Candidate, CallLog, CallEvaluation, User, JobRole, QuestionSet, AuditLog, UserRole
+from app.routers import campaigns, candidates, calls, auth_routes
 
 # Create all tables
 Base.metadata.create_all(bind=engine)
@@ -30,25 +30,25 @@ def seed_default_accounts():
 
             # --- USERS ---
             admin = User(
-                email="admin@company.com",
+                username="admin@company.com",
                 hashed_password=get_password_hash("password123"),
-                role="admin",
+                role=UserRole.ADMIN,
                 full_name="Alex Morgan",
                 department="Administration",
                 is_active=True
             )
             hr1 = User(
-                email="hr@company.com",
+                username="hr@company.com",
                 hashed_password=get_password_hash("password123"),
-                role="hr",
+                role=UserRole.HR,
                 full_name="Sarah Johnson",
                 department="Human Resources",
                 is_active=True
             )
             hr2 = User(
-                email="hr2@company.com",
+                username="hr2@company.com",
                 hashed_password=get_password_hash("password123"),
-                role="hr",
+                role=UserRole.HR,
                 full_name="Raj Patel",
                 department="Engineering Recruitment",
                 is_active=True
@@ -301,7 +301,7 @@ app.add_middleware(
 app.include_router(campaigns.router, prefix="/api")
 app.include_router(candidates.router, prefix="/api")
 app.include_router(calls.router, prefix="/api")
-app.include_router(users.router, prefix="/api")
+app.include_router(auth_routes.router, prefix="/api")
 
 # V1 End-to-End Platform Routers
 from app.routers import dashboard, webhooks, scheduling, media_stream

@@ -1,8 +1,13 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import Column, String, Integer, Float, Text, DateTime, ForeignKey, JSON, Boolean
+from sqlalchemy import Column, String, Integer, Float, Text, DateTime, ForeignKey, JSON, Boolean, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from app.database import Base
+import enum
+
+class UserRole(str, enum.Enum):
+    HR = "hr"
+    ADMIN = "admin"
 
 
 def generate_uuid():
@@ -13,9 +18,9 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
-    email = Column(String(255), nullable=False, unique=True, index=True)
+    username = Column(String(255), nullable=False, unique=True, index=True)
     hashed_password = Column(String(255), nullable=False)
-    role = Column(String(50), nullable=False, default="hr")  # admin, hr
+    role = Column(SQLEnum(UserRole), nullable=False, default=UserRole.HR)
     full_name = Column(String(255), nullable=True)
     department = Column(String(100), nullable=True)
     is_active = Column(Boolean, default=True)

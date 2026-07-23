@@ -7,14 +7,14 @@ import {
 } from 'lucide-react';
 
 const navItems = [
-    { to: '/hr', icon: LayoutDashboard, label: 'Overview Dashboard', end: true },
-    { to: '/hr/campaigns/new', icon: Plus, label: 'Create Campaign' },
-    { to: '/hr/campaigns', icon: List, label: 'All Campaigns' },
-    { to: '/hr/candidates', icon: Users, label: 'Candidate Dossiers' },
-    { to: '/hr/analytics', icon: BarChart3, label: 'Analytics & Leaderboard' },
-    { to: '/hr/reports', icon: FileText, label: 'Evaluation Reports' },
-    { to: '/admin/roles', icon: Shield, label: 'Job Roles & Question Sets' },
-    { to: '/admin/users', icon: Settings, label: 'Team & System Settings' },
+    { to: '/hr', icon: LayoutDashboard, label: 'Overview Dashboard', end: true, roles: ['hr', 'admin'] },
+    { to: '/hr/campaigns/new', icon: Plus, label: 'Create Campaign', roles: ['hr'] },
+    { to: '/hr/campaigns', icon: List, label: 'All Campaigns', roles: ['hr'] },
+    { to: '/hr/candidates', icon: Users, label: 'Candidate Dossiers', roles: ['hr'] },
+    { to: '/hr/analytics', icon: BarChart3, label: 'Analytics & Leaderboard', roles: ['hr', 'admin'] },
+    { to: '/hr/reports', icon: FileText, label: 'Evaluation Reports', roles: ['hr', 'admin'] },
+    { to: '/admin/roles', icon: Shield, label: 'Job Roles & Question Sets', roles: ['admin'] },
+    { to: '/admin/users', icon: Settings, label: 'Team & System Settings', roles: ['admin'] },
 ];
 
 export default function HRLayout() {
@@ -69,7 +69,7 @@ export default function HRLayout() {
                 </div>
 
                 <nav style={{ padding: '8px 12px', flex: 1 }}>
-                    {navItems.map(item => (
+                    {navItems.filter(item => item.roles.includes(user?.role || 'hr')).map(item => (
                         <NavLink
                             key={item.to}
                             to={item.to}
@@ -101,7 +101,7 @@ export default function HRLayout() {
                         }}>{user?.full_name?.[0] || 'U'}</div>
                         <div style={{ overflow: 'hidden' }}>
                             <div style={{ fontWeight: 600, color: 'white', fontSize: 13, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user?.full_name || 'Active User'}</div>
-                            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{user?.email || 'Recruiter'}</div>
+                            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{user?.username || 'Recruiter'}</div>
                         </div>
                     </div>
                     <button

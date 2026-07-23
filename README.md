@@ -11,8 +11,8 @@ $$\text{Landing Page Leaderboard (`/`)} \longrightarrow \text{WhatsApp Outreach}
 
 1. **Live Landing Page Candidate Rankings (`/`)**:
    - Displays real-time **Candidate Intelligence Scores (0–100)**, target roles, contact info, and AI justification cards directly on the homepage, pulling live data from the SQLite database.
-2. **Single Unified Access & Role-Free Navigation**:
-   - Single-click login interface (`/login`). Role barriers between Admin and HR have been removed so all users have complete access to all platform features.
+2. **Role-Based Access Control (RBAC) & Secure Authentication**:
+   - Secure JWT-based login interface (`/login`). `Admin` users can manage system settings and job roles, while `HR` users handle campaigns and candidate screening.
 3. **Unified Navigation Layout (`/hr`)**:
    - Combined sidebar layout covering **Overview Dashboard**, **V1 AI Screener**, **Create Campaign**, **My Campaigns**, **Candidate Dossiers**, **Analytics & Leaderboard**, **Job Roles & Question Sets**, and **Team Settings**.
 4. **V1 Admin & Call Trigger Dashboard (`/dashboard`)**:
@@ -34,7 +34,7 @@ $$\text{Landing Page Leaderboard (`/`)} \longrightarrow \text{WhatsApp Outreach}
 ## 🛠️ Stack & Architecture
 
 - **Backend Framework**: FastAPI (Python 3.10+)
-- **Database**: SQLite (`recruitment.db` via SQLAlchemy ORM)
+- **Database**: PostgreSQL / SQLite (via SQLAlchemy ORM)
 - **AI / LLM Engine**: Local **Ollama** (`llama3`) — *100% offline local LLM execution*
 - **Speech & Telephony**:
   - STT: `faster-whisper` + RMS Energy VAD
@@ -99,7 +99,9 @@ AntiTalk/
    ALGORITHM="HS256"
    ACCESS_TOKEN_EXPIRE_MINUTES=1440
 
-   DATABASE_URL="sqlite:///./recruitment.db"
+   # Use PostgreSQL (Requires: pip install psycopg2-binary)
+   DATABASE_URL="postgresql://postgres:password@localhost/recruitment_db"
+   # Or use SQLite: DATABASE_URL="sqlite:///./recruitment.db"
 
    TWILIO_ACCOUNT_SID="YOUR_TWILIO_ACCOUNT_SID_HERE"
    TWILIO_AUTH_TOKEN="YOUR_TWILIO_AUTH_TOKEN_HERE"
@@ -134,6 +136,8 @@ python -m venv venv
 # Mac/Linux: source venv/bin/activate
 
 pip install -r requirements.txt
+# Ensure FastAPI and Pydantic are up to date:
+pip install --upgrade fastapi pydantic
 ```
 
 **Frontend Setup:**
@@ -141,6 +145,18 @@ pip install -r requirements.txt
 cd frontend
 npm install
 ```
+
+---
+
+### Step 3: Database Setup
+
+This platform uses PostgreSQL for robust RBAC and user data. 
+
+1. Ensure PostgreSQL is installed and running on your machine (or use Docker).
+2. Create a database named `recruitment_db` (or update `.env` to match your DB name).
+3. Update `DATABASE_URL` in `backend/.env` with your Postgres credentials:
+   `DATABASE_URL="postgresql://username:password@localhost/recruitment_db"`
+4. When you first launch the backend, SQLAlchemy will automatically create all required tables and seed a default Admin user.
 
 ---
 

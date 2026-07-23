@@ -5,14 +5,11 @@ import { createCampaign, uploadCandidatesCSV } from '../../api/client';
 import { Check, Upload, ChevronRight, ChevronLeft, UserPlus, Trash2 } from 'lucide-react';
 
 const defaultQuestions = [
-    { text: 'Can you briefly introduce yourself and walk me through your professional background?', category: 'Introduction', type: 'long_answer' },
-    { text: 'Why are you interested in this role and our company?', category: 'Behavioral', type: 'long_answer' },
-    { text: 'What is your current notice period?', category: 'Logistics', type: 'short_answer' },
-    { text: 'What are your salary expectations?', category: 'Logistics', type: 'short_answer' },
-    { text: 'Are you open to relocation if required?', category: 'Logistics', type: 'yes_no' },
-    { text: 'Can you describe a challenging project you worked on and how you handled it?', category: 'Behavioral', type: 'long_answer' },
-    { text: 'What are your strongest technical skills?', category: 'Technical', type: 'long_answer' },
-    { text: 'Do you have experience working in Agile teams?', category: 'Technical', type: 'yes_no' },
+    { question_text: 'Can you briefly introduce yourself and walk me through your professional background?', category: 'Introduction', expected_answer: 'Candidate should provide a clear summary of their experience.', difficulty: 'Easy', type: 'long_answer' },
+    { question_text: 'Why are you interested in this role and our company?', category: 'Behavioral', expected_answer: 'Should mention alignment with company goals and role requirements.', difficulty: 'Easy', type: 'long_answer' },
+    { question_text: 'What is your current notice period?', category: 'Logistics', expected_answer: 'State time in weeks or months.', difficulty: 'Easy', type: 'short_answer' },
+    { question_text: 'What are your salary expectations?', category: 'Logistics', expected_answer: 'State numerical value or range.', difficulty: 'Easy', type: 'short_answer' },
+    { question_text: 'Are you open to relocation if required?', category: 'Logistics', expected_answer: 'Yes or No.', difficulty: 'Easy', type: 'yes_no' },
 ];
 
 const steps = [
@@ -149,12 +146,7 @@ export default function HRCreateCampaign() {
         } else if (step === 2) {
             setStep(3);
         } else if (step === 3) {
-            if (questionInputMode === 'text' && questionText.trim()) {
-                const parsed = questionText.trim().split('\n')
-                    .filter(l => l.trim())
-                    .map((l) => ({ text: l.trim(), category: 'Custom', type: 'long_answer' }));
-                update('question_set', parsed);
-            }
+            // Questions are updated dynamically in the form array
             setLoading(true);
             try {
                 const res = await createCampaign({
@@ -439,99 +431,103 @@ export default function HRCreateCampaign() {
                             {/* Step 3: Question Set */}
                             {step === 3 && (
                                 <div>
-                                    <h3 style={{ fontWeight: 700, fontSize: 19, marginBottom: 8, color: '#1e293b' }}>Question Set</h3>
-                                    <p style={{ fontSize: 14, color: '#64748b', marginBottom: 16 }}>
-                                        These questions will be asked by the AI voice agent. Import via CSV or enter manually below.
+                                    <h3 style={{ fontWeight: 700, fontSize: 19, marginBottom: 8, color: '#1e293b' }}>Structured Interview Questions</h3>
+                                    <p style={{ fontSize: 14, color: '#64748b', marginBottom: 24 }}>
+                                        Define the exact questions the AI will ask, along with the criteria the AI will use to evaluate the answers.
                                     </p>
 
-                                    <div style={{ display: 'flex', gap: 8, marginBottom: 20, background: '#f1f5f9', padding: 4, borderRadius: 10, width: 'fit-content' }}>
-                                        {(['list', 'text'] as const).map(mode => (
-                                            <button
-                                                key={mode}
-                                                onClick={() => setQuestionInputMode(mode)}
-                                                style={{
-                                                    padding: '6px 18px', borderRadius: 7, border: 'none', cursor: 'pointer',
-                                                    fontWeight: 600, fontSize: 13,
-                                                    background: questionInputMode === mode ? 'white' : 'transparent',
-                                                    boxShadow: questionInputMode === mode ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                                                    color: questionInputMode === mode ? '#1e3a5f' : '#94a3b8',
-                                                }}
-                                            >
-                                                {mode === 'list' ? '📋 Question List' : '✏️ Text / CSV Import'}
-                                            </button>
-                                        ))}
-                                    </div>
-
-                                    {questionInputMode === 'list' && (
-                                        <div>
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                                                {form.question_set.map((q, i) => (
-                                                    <div key={i} style={{
-                                                        display: 'flex', gap: 14, padding: 14,
-                                                        background: '#f8fafc', borderRadius: 10, border: '1px solid #e2e8f0',
-                                                        alignItems: 'flex-start',
-                                                    }}>
-                                                        <span style={{ fontWeight: 700, color: '#94a3b8', fontSize: 14, minWidth: 24, marginTop: 2 }}>{i + 1}.</span>
-                                                        <div style={{ flex: 1 }}>
-                                                            <div style={{ fontSize: 14, color: '#1e293b', fontWeight: 500, marginBottom: 6 }}>{q.text}</div>
-                                                            <div style={{ display: 'flex', gap: 8 }}>
-                                                                <span style={{ background: '#dbeafe', color: '#1e40af', padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 600 }}>{q.category}</span>
-                                                                <span style={{ background: '#f3f4f6', color: '#6b7280', padding: '2px 8px', borderRadius: 4, fontSize: 11 }}>{q.type}</span>
-                                                            </div>
-                                                        </div>
-                                                        <button
-                                                            onClick={() => update('question_set', form.question_set.filter((_, j) => j !== i))}
-                                                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 18, lineHeight: 1 }}
-                                                        >×</button>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                                        {form.question_set.map((q, i) => (
+                                            <div key={i} style={{
+                                                padding: 20, background: '#f8fafc', borderRadius: 12, border: '1px solid #e2e8f0',
+                                            }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                                                    <div style={{ fontWeight: 700, color: '#334155', fontSize: 15 }}>Question {i + 1}</div>
+                                                    <button
+                                                        onClick={() => update('question_set', form.question_set.filter((_, j) => j !== i))}
+                                                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 13, fontWeight: 600 }}
+                                                    >Remove</button>
+                                                </div>
+                                                
+                                                <div style={{ display: 'grid', gap: 14 }}>
+                                                    <div>
+                                                        <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', display: 'block', marginBottom: 4 }}>Question Text *</label>
+                                                        <textarea 
+                                                            className="form-input" 
+                                                            value={q.question_text || ''} 
+                                                            onChange={e => {
+                                                                const newQs = [...form.question_set];
+                                                                newQs[i] = { ...newQs[i], question_text: e.target.value };
+                                                                update('question_set', newQs);
+                                                            }}
+                                                            placeholder="e.g. Explain how index lookup works in PostgreSQL"
+                                                            rows={2}
+                                                        />
                                                     </div>
-                                                ))}
-                                            </div>
-                                            <div style={{ padding: 14, marginTop: 12, border: '2px dashed #e2e8f0', borderRadius: 10, textAlign: 'center', cursor: 'pointer', color: '#94a3b8', fontSize: 14 }}
-                                                onClick={() => update('question_set', [...form.question_set, { text: 'New question...', category: 'Custom', type: 'long_answer' }])}>
-                                                + Add Question
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {questionInputMode === 'text' && (
-                                        <div>
-                                            <div
-                                                className={`drop-zone ${questionCsvDrag ? 'dragging' : ''}`}
-                                                style={{ marginBottom: 16 }}
-                                                onDragOver={e => { e.preventDefault(); setQuestionCsvDrag(true); }}
-                                                onDragLeave={() => setQuestionCsvDrag(false)}
-                                                onDrop={handleQuestionCsvDrop}
-                                                onClick={() => document.getElementById('qcsv-input')?.click()}
-                                            >
-                                                <input
-                                                    type="file" id="qcsv-input" accept=".csv" style={{ display: 'none' }}
-                                                    onChange={async e => {
-                                                        const f = e.target.files?.[0];
-                                                        if (f) { const text = await f.text(); parseQuestionCsv(text); }
-                                                    }}
-                                                />
-                                                <Upload size={28} color="#94a3b8" style={{ margin: '0 auto 8px' }} />
-                                                <div style={{ fontWeight: 600, color: '#64748b', fontSize: 14, marginBottom: 4 }}>Upload Question CSV</div>
-                                                <div style={{ fontSize: 12, color: '#94a3b8' }}>
-                                                    Expected format: <code>question,category,type</code> (one row per header)
+                                                    <div>
+                                                        <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', display: 'block', marginBottom: 4 }}>Expected Answer / Evaluation Criteria *</label>
+                                                        <textarea 
+                                                            className="form-input" 
+                                                            value={q.expected_answer || ''} 
+                                                            onChange={e => {
+                                                                const newQs = [...form.question_set];
+                                                                newQs[i] = { ...newQs[i], expected_answer: e.target.value };
+                                                                update('question_set', newQs);
+                                                            }}
+                                                            placeholder="e.g. Must mention B-Trees, O(log N) lookup time, and index scans"
+                                                            rows={2}
+                                                        />
+                                                    </div>
+                                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                                                        <div>
+                                                            <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', display: 'block', marginBottom: 4 }}>Target Skill / Category</label>
+                                                            <input 
+                                                                className="form-input" 
+                                                                value={q.category || ''} 
+                                                                onChange={e => {
+                                                                    const newQs = [...form.question_set];
+                                                                    newQs[i] = { ...newQs[i], category: e.target.value };
+                                                                    update('question_set', newQs);
+                                                                }}
+                                                                placeholder="e.g. Database Internals"
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', display: 'block', marginBottom: 4 }}>Difficulty</label>
+                                                            <select 
+                                                                className="form-input" 
+                                                                value={q.difficulty || 'Easy'} 
+                                                                onChange={e => {
+                                                                    const newQs = [...form.question_set];
+                                                                    newQs[i] = { ...newQs[i], difficulty: e.target.value };
+                                                                    update('question_set', newQs);
+                                                                }}
+                                                            >
+                                                                <option value="Easy">Easy</option>
+                                                                <option value="Medium">Medium</option>
+                                                                <option value="Hard">Hard</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                {/* Live Preview Card */}
+                                                <div style={{ marginTop: 16, padding: 12, background: '#f1f5f9', borderRadius: 8, borderLeft: '3px solid #3b82f6' }}>
+                                                    <div style={{ fontSize: 11, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', marginBottom: 4 }}>AI Prompt Preview</div>
+                                                    <div style={{ fontSize: 13, color: '#334155' }}>
+                                                        <strong>Ask:</strong> "{q.question_text || '[Question]'}"<br/>
+                                                        <strong>Evaluate against:</strong> "{q.expected_answer || '[Criteria]'}"
+                                                    </div>
                                                 </div>
                                             </div>
-
-                                            <div style={{ margin: '0 0 10px', textAlign: 'center', color: '#94a3b8', fontSize: 13 }}>— or type questions manually, one per line —</div>
-
-                                            <textarea
-                                                className="form-input"
-                                                value={questionText}
-                                                onChange={e => setQuestionText(e.target.value)}
-                                                rows={10}
-                                                placeholder={"Tell me about your most recent project?\nWhat is your current salary expectation?\nAre you willing to relocate?"}
-                                                style={{ resize: 'vertical', fontFamily: 'monospace', fontSize: 13 }}
-                                            />
-                                            <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 8 }}>
-                                                Each line = one question. Category and type will default to "Custom" and "long_answer".
-                                            </div>
-                                        </div>
-                                    )}
+                                        ))}
+                                    </div>
+                                    <button 
+                                        onClick={() => update('question_set', [...form.question_set, { question_text: '', expected_answer: '', category: 'General', difficulty: 'Medium', type: 'long_answer' }])}
+                                        style={{ marginTop: 20, padding: '12px 24px', width: '100%', background: 'transparent', border: '2px dashed #cbd5e1', borderRadius: 12, color: '#475569', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                                    >
+                                        + Add New Question
+                                    </button>
                                 </div>
                             )}
 

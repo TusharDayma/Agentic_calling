@@ -1,35 +1,46 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
-export default function LoginPage() {
-    const { login } = useAuth();
+export default function SignupPage() {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [remember, setRemember] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        setSuccess('');
+
+        if (password !== confirmPassword) {
+            setError('Passwords do not match');
+            return;
+        }
+
+        if (password.length < 8) {
+            setError('Password must be at least 8 characters long');
+            return;
+        }
+
         setLoading(true);
         try {
-            await login(email, password);
-            navigate('/hr');
+            await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/signup`, {
+                username: email,
+                password: password
+            });
+            setSuccess('Registration successful! Redirecting to login...');
+            setTimeout(() => navigate('/login'), 2000);
         } catch (err: unknown) {
             const axiosErr = err as { response?: { data?: { detail?: string } } };
-            setError(axiosErr?.response?.data?.detail || 'Invalid credentials. Please try again.');
+            setError(axiosErr?.response?.data?.detail || 'Registration failed. Please try again.');
         } finally {
             setLoading(false);
         }
-    };
-
-    const fillDemo = (role: 'admin' | 'hr') => {
-        setEmail(role === 'admin' ? 'admin@company.com' : 'hr@company.com');
-        setPassword('password123');
     };
 
     return (
@@ -62,19 +73,18 @@ export default function LoginPage() {
                     </div>
 
                     <h1 style={{ fontSize: 42, fontWeight: 800, lineHeight: 1.15, marginBottom: 20, letterSpacing: '-1px' }}>
-                        AI-Powered<br />
-                        <span style={{ color: '#00f2fe' }}>Candidate Screening</span><br />
-                        at Scale
+                        Join the Future of<br />
+                        <span style={{ color: '#00f2fe' }}>Automated Screening</span>
                     </h1>
                     <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)', lineHeight: 1.7, maxWidth: 400 }}>
-                        Screen candidates with AI voice agents. Get instant candidate intelligence scores, transcripts, and verified rankings.
+                        Create your HR account today to start building AI voice campaigns and evaluating candidates at scale.
                     </p>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 48 }}>
                         {[
-                            { icon: '🎯', text: 'AI Voice Pre-Screening (Local Ollama)' },
-                            { icon: '📊', text: 'Real-time Candidate Intelligence Scores' },
-                            { icon: '⚡', text: 'Twilio WhatsApp & Scheduling Funnel' },
+                            { icon: '🚀', text: 'Launch Campaigns Instantly' },
+                            { icon: '🤖', text: 'AI-Powered Interviewing' },
+                            { icon: '📈', text: 'Data-Driven Candidate Ranking' },
                         ].map((item) => (
                             <div key={item.text} style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'rgba(255,255,255,0.85)' }}>
                                 <span style={{ fontSize: 20 }}>{item.icon}</span>
@@ -85,7 +95,7 @@ export default function LoginPage() {
                 </motion.div>
             </div>
 
-            {/* Right panel - login form */}
+            {/* Right panel - signup form */}
             <div style={{
                 width: '100%',
                 maxWidth: 500,
@@ -104,7 +114,7 @@ export default function LoginPage() {
                     style={{ width: '100%', maxWidth: 400 }}
                 >
                     {/* Logo for mobile */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 36 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 36 }} className="lg:hidden">
                         <div style={{
                             width: 44, height: 44, borderRadius: 12,
                             background: 'linear-gradient(135deg, #00f2fe, #4facfe)',
@@ -118,8 +128,8 @@ export default function LoginPage() {
                     </div>
 
                     <div style={{ marginBottom: 32 }}>
-                        <h2 style={{ fontSize: 28, fontWeight: 800, color: 'white', marginBottom: 8 }}>Welcome back</h2>
-                        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>Sign in to access all platform features</p>
+                        <h2 style={{ fontSize: 28, fontWeight: 800, color: 'white', marginBottom: 8 }}>Create Account</h2>
+                        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>Register as an HR Recruiter</p>
                     </div>
 
                     {error && (
@@ -136,10 +146,24 @@ export default function LoginPage() {
                         </motion.div>
                     )}
 
+                    {success && (
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                            style={{
+                                background: 'rgba(16, 185, 129, 0.15)',
+                                border: '1px solid rgba(16, 185, 129, 0.3)',
+                                borderRadius: 10, padding: '12px 16px',
+                                color: '#6ee7b7', fontSize: 14, marginBottom: 20
+                            }}
+                        >
+                            ✓ {success}
+                        </motion.div>
+                    )}
+
                     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                         <div>
                             <label style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.8)', display: 'block', marginBottom: 8 }}>
-                                Email Address
+                                Email Address (Username)
                             </label>
                             <input
                                 type="email"
@@ -168,8 +192,9 @@ export default function LoginPage() {
                                 className="form-input"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                placeholder="••••••••"
+                                placeholder="Min 8 characters"
                                 required
+                                minLength={8}
                                 style={{
                                     background: 'rgba(255,255,255,0.08)',
                                     border: '1.5px solid rgba(255,255,255,0.15)',
@@ -181,69 +206,49 @@ export default function LoginPage() {
                             />
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', color: 'rgba(255,255,255,0.7)', fontSize: 13 }}>
-                                <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} style={{ accentColor: '#00f2fe' }} />
-                                Remember me
+                        <div>
+                            <label style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.8)', display: 'block', marginBottom: 8 }}>
+                                Confirm Password
                             </label>
-                            <a href="#" style={{ fontSize: 13, color: '#00f2fe', textDecoration: 'none', fontWeight: 500 }}>Forgot password?</a>
+                            <input
+                                type="password"
+                                className="form-input"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                placeholder="Confirm your password"
+                                required
+                                minLength={8}
+                                style={{
+                                    background: 'rgba(255,255,255,0.08)',
+                                    border: '1.5px solid rgba(255,255,255,0.15)',
+                                    color: 'white',
+                                    padding: '12px',
+                                    borderRadius: 8,
+                                    width: '100%'
+                                }}
+                            />
                         </div>
 
                         <button
                             type="submit"
-                            disabled={loading}
+                            disabled={loading || !!success}
                             style={{
-                                background: loading ? 'rgba(0,242,254,0.5)' : 'linear-gradient(135deg, #00f2fe, #4facfe)',
+                                background: (loading || !!success) ? 'rgba(0,242,254,0.5)' : 'linear-gradient(135deg, #00f2fe, #4facfe)',
                                 color: '#0f172a', padding: '14px', borderRadius: 10,
-                                fontWeight: 800, fontSize: 15, border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
+                                fontWeight: 800, fontSize: 15, border: 'none', cursor: (loading || !!success) ? 'not-allowed' : 'pointer',
                                 marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                                 transition: 'all 0.2s',
                             }}
                         >
-                            {loading ? 'Signing in...' : '→  Sign In to Platform'}
+                            {loading ? 'Creating Account...' : '→  Sign Up'}
                         </button>
                     </form>
 
-                    {/* Quick Login */}
-                    <div style={{
-                        marginTop: 32, padding: 20, borderRadius: 12,
-                        background: 'rgba(255,255,255,0.06)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                    }}>
-                        <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', marginBottom: 12, letterSpacing: '0.08em' }}>
-                            Quick One-Click Demo Access
-                        </div>
-                        <div style={{ display: 'flex', gap: 8, flexDirection: 'column' }}>
-                            {[
-                                { label: 'Admin Access', email: 'admin@company.com', role: 'admin' as const },
-                                { label: 'HR Recruiter Access', email: 'hr@company.com', role: 'hr' as const },
-                            ].map((demo) => (
-                                <button
-                                    key={demo.role}
-                                    onClick={() => fillDemo(demo.role)}
-                                    style={{
-                                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                                        padding: '10px 14px', borderRadius: 8,
-                                        background: 'rgba(255,255,255,0.05)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        cursor: 'pointer', color: 'rgba(255,255,255,0.85)', fontSize: 13,
-                                        transition: 'all 0.2s',
-                                    }}
-                                >
-                                    <span style={{ fontWeight: 600 }}>{demo.label}</span>
-                                    <code style={{ fontSize: 11, color: '#00f2fe', background: 'rgba(0,242,254,0.1)', padding: '2px 8px', borderRadius: 4 }}>
-                                        {demo.email}
-                                    </code>
-                                </button>
-                            ))}
-                        </div>
-                        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 8 }}>Default password: <code style={{ color: '#00f2fe' }}>password123</code></p>
-                    </div>
                     <div style={{ marginTop: 24, textAlign: 'center' }}>
                         <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>
-                            Don't have an account?{' '}
+                            Already have an account?{' '}
                             <button
-                                onClick={() => navigate('/signup')}
+                                onClick={() => navigate('/login')}
                                 style={{
                                     background: 'none',
                                     border: 'none',
@@ -255,7 +260,7 @@ export default function LoginPage() {
                                     textDecoration: 'underline'
                                 }}
                             >
-                                Sign up here as HR
+                                Sign in here
                             </button>
                         </p>
                     </div>

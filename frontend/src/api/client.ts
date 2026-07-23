@@ -28,8 +28,8 @@ api.interceptors.response.use(
 );
 
 // Auth
-export const loginApi = (email: string, password: string) =>
-    api.post('/auth/login', { email, password });
+export const loginApi = (username: string, password: string) =>
+    api.post('/auth/login', { username, password });
 
 export const getMeApi = () => api.get('/auth/me');
 

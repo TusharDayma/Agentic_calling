@@ -5,13 +5,11 @@ from datetime import datetime
 # --- CAMPAIGN SCHEMAS ---
 
 class QuestionItem(BaseModel):
-    id: Optional[str] = "q1"
-    question_text: Optional[str] = ""
-    question_type: Optional[str] = "long_answer"
-    expected_answer: Optional[str] = ""
-    category: Optional[str] = "General"
-    text: Optional[str] = None
-    type: Optional[str] = None
+    question_text: str
+    category: str
+    expected_answer: str
+    difficulty: str
+    type: Optional[str] = "long_answer"
 
 class CampaignBase(BaseModel):
     title: str
@@ -20,7 +18,7 @@ class CampaignBase(BaseModel):
     calling_window_end: Optional[str] = "18:00"
     max_retries: Optional[int] = 3
     retry_delay_minutes: Optional[int] = 120
-    question_set: List[Dict[str, Any]] = []
+    question_set: List[QuestionItem] = []
     accent: Optional[str] = "en-US"
     voice_speed: Optional[str] = "1.0"
     department: Optional[str] = None
